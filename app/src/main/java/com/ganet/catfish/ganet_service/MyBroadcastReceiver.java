@@ -13,6 +13,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             context.startService(new Intent(context, GaNetService.class));
         }
-        throw new UnsupportedOperationException("Not yet implemented");
+        // throw new UnsupportedOperationException("Not yet implemented");
     }
 }

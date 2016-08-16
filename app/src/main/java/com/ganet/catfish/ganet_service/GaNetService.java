@@ -137,6 +137,9 @@ public class GaNetService extends Service {
                 in.putExtra( "radioFr", mGANET.mRadio.mFrequency );
                 in.putExtra( "radioStoreId", mGANET.mRadio.mStoreID );
                 in.putExtra( "radioQuality", mGANET.mRadio.mRQuality );
+                Log.d( TAG, "(" + mGANET.mRadio.mCurrRAction.ordinal() + ") Radio: " +
+                        mGANET.mRadio.mFrequency + "; Type:" + mGANET.mRadio.mRadioType.ordinal() +
+                        "; Store#" + mGANET.mRadio.mStoreID );
                 sendBroadcast(in);
                 break;
             case eNone:
@@ -246,11 +249,11 @@ public class GaNetService extends Service {
             public void onReceive(Context context, Intent intent) {
                 Intent in;
                 switch (intent.getAction()) {
-                    case SERVICESTART:
-                        if(!isStart) {
-                            startUSBList();
-                        }
-                        break;
+//                    case SERVICESTART:
+//                        if(!isStart) {
+//                            startUSBList();
+//                        }
+//                        break;
                     case SERVICESTATUS_REQ:
                         in = new Intent(SERVICESTATUS_RES);
                         in.putExtra("Start", isStart);

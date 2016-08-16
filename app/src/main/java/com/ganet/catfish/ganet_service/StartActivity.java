@@ -59,13 +59,13 @@ public class StartActivity extends AppCompatActivity {
         ((RadioButton) findViewById(R.id.rb3)).setText("yam_fm1.txt");
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        Intent in = new Intent(GaNetService.SERVICESTATUS_REQ);
-        sendBroadcast(in);
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        Intent in = new Intent(GaNetService.SERVICESTATUS_REQ);
+//        sendBroadcast(in);
+//    }
 
     public void onStartService(View v) {
         if(!isServiceStart)
