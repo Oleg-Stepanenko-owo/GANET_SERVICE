@@ -87,6 +87,12 @@
             </RadioGroup>
         </LinearLayout>
 
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/pbReading" />
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"

@@ -55,4 +55,7 @@ public class GaNetManager {
         return returnVal;
     }
 
+    public void updateReading(long length, long readedSize) {
+        gaService.readingFileUpdate( length, readedSize );
+    }
 }

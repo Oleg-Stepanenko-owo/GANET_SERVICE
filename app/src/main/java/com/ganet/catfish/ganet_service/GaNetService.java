@@ -159,6 +159,13 @@ public class GaNetService extends Service {
         }
     }
 
+    public void readingFileUpdate(long length, long readedSize) {
+        Intent in = new Intent(READFILE);
+        in.putExtra("AllSize", length );
+        in.putExtra("ReadedSize", readedSize );
+        sendBroadcast(in);
+    }
+
     /*
      * This handler will be passed to UsbService. Data received from serial port is displayed through this handler
      */
@@ -261,8 +268,11 @@ public class GaNetService extends Service {
                         sendBroadcast(in);
                         break;
                     case READFILE:
-                        readFileObj = new ReadFromFile(intent.getStringExtra("StartRead"), mGANET );
-                        readFileObj.startRead( mGANET.getParser() );
+                        readFileObj = new ReadFromFile(intent.getStringExtra("File"), mGANET );
+                        if( intent.hasExtra("Read") ){
+                            if( intent.getBooleanExtra( "Read", false ) ) readFileObj.startRead( mGANET.getParser() );
+                            else readFileObj.stopRead();
+                        }
                         break;
                     case STARTCDINFO_REQ:
                         in = new Intent(STARTCDINFO_RES);
