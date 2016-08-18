@@ -33,6 +33,7 @@ public class FolderData {
     public FolderData( int folderID ) {
         folderName = new GeNetPkgText();
         this.folderID = folderID;
+        subFoldersId = new Vector<Integer>();
     }
     /**
      *
@@ -52,10 +53,6 @@ public class FolderData {
 
     public String getName() {
         return folderName.getText();
-    }
-
-    public void setSubFolderCount( final int count ) {
-        subFoldersId = new Vector<Integer>(count);
     }
 
     public int getFolderID() {

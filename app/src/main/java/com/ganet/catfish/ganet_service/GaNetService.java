@@ -122,7 +122,15 @@ public class GaNetService extends Service {
                     in = new Intent(FOLDERINFO);
                             in.putExtra( "FolderId", mFolderData.getFolderID() );
                             in.putExtra( "FolderParentId", mFolderData.parentID );
-                            in.putExtra( "FolderName", mFolderData.getName() );
+                    if( (mFolderData.getFolderID() == mFolderData.parentID) && (mFolderData.parentID == 0) ){
+                            in.putExtra( "FolderName", "DISK#" + String.valueOf(mGANET.mActiveTrack.diskID) );
+                    } else  in.putExtra( "FolderName", mFolderData.getName() );
+                            in.putExtra( "SubFCount", mFolderData.subFoldersId.size() );
+                            if( mFolderData.subFoldersId.size() != 0 ){
+                                for( int a =0; a < mFolderData.subFoldersId.size(); a++ ) {
+                                    in.putExtra("subID" + String.valueOf(a), mFolderData.subFoldersId.get(a));
+                                }
+                            }
                     sendBroadcast(in);
                 }
                 break;

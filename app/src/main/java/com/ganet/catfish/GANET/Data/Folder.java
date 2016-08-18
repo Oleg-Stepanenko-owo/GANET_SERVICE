@@ -104,7 +104,6 @@ public class Folder {
             valueCom = data.substring( textPos +=2, textPos +=2 );
             valueCom = valueCom.replace("FF","0");
             int vElementCount = Integer.valueOf(valueCom).intValue();
-            currentFolderData.setSubFolderCount( vElementCount );
 
             textPos +=6;
 
