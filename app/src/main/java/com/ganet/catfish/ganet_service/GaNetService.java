@@ -14,6 +14,8 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ganet.catfish.GANET.Data.Folder;
+import com.ganet.catfish.GANET.Data.FolderData;
 import com.ganet.catfish.GANET.GaNetManager;
 import com.ganet.catfish.GANET.ParserGANET;
 import com.ganet.catfish.GANET.ReadFromFile;
@@ -115,6 +117,14 @@ public class GaNetService extends Service {
             case eTr:
                 break;
             case eFolder:
+                if (mGANET.mFolder.mFoldersData.containsKey(mGANET.mFolder.folderId)) {
+                    final FolderData mFolderData = mGANET.mFolder.mFoldersData.get(mGANET.mFolder.folderId);
+                    in = new Intent(FOLDERINFO);
+                            in.putExtra( "FolderId", mFolderData.getFolderID() );
+                            in.putExtra( "FolderParentId", mFolderData.parentID );
+                            in.putExtra( "FolderName", mFolderData.getName() );
+                    sendBroadcast(in);
+                }
                 break;
             case eTime:
                 in = new Intent(TIMEINFO);

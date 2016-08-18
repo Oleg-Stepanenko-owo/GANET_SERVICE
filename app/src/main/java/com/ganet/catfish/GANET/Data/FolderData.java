@@ -18,11 +18,9 @@ import java.util.Vector;
 
 public class FolderData {
 
-    private int allPack;
-    public boolean[] pk;
-    public String[] pkS;
+    private GeNetPkgText folderName;
 
-    public int folderID;
+    private int folderID;
     public int parentID;
     public int folderLevel;
     public boolean isSelect;
@@ -32,48 +30,35 @@ public class FolderData {
     public Vector<Integer> subFoldersId;
 
 
-    public FolderData() {
-        allPack = -1;
+    public FolderData( int folderID ) {
+        folderName = new GeNetPkgText();
+        this.folderID = folderID;
     }
     /**
      *
      * @param allPk
      */
-    public FolderData(int allPk) {
-        pk = new boolean[4];
-        pkS = new String[4];
-        for( int a = 0; a < 4; a++ ){
-            pk[a] = false;
-            pkS[a] = "";
-        }
-
-        allPack = allPk;
-
-        if( allPack == 2)       { pk[3] = true; }
-        else if( allPack == 1 ) { pk[3] = true; pk[2] = true; }
-        else if( allPack == 0 ) { pk[3] = true; pk[2] = true; pk[1] = true; }
+    public void setFolderAllPkg(int allPk) {
+        folderName.setAllPack( allPk );
     }
 
-    /**
-     *
-     * @param currPk
-     * @param folderName
-     */
     public void updateData(int currPk, String folderName ) {
-        pkS[currPk] = folderName;
-        pk[currPk] = true;
+        this.folderName.updateInfo( folderName, currPk );
     }
-
 
     public boolean isComplete() {
-        return (pk[0] && pk[1] && pk[2] && pk[3]);
+        return folderName.isReady();
     }
 
-    public String getName(){
-        return (pkS[0] + pkS[1] + pkS[2] + pkS[3]);
+    public String getName() {
+        return folderName.getText();
     }
 
     public void setSubFolderCount( final int count ) {
         subFoldersId = new Vector<Integer>(count);
+    }
+
+    public int getFolderID() {
+        return folderID;
     }
 }

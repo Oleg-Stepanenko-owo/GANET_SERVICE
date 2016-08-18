@@ -75,7 +75,7 @@ public class ParserGANET {
                 String line = vGANETCommand.get(a);
                 activeParseID = eParse.eNone;
                 // <GA:183 100 600D01000140 1517 0000CD> - TIME
-                if( (line.indexOf("<GA:") != -1) && (line.indexOf(">") != -1) ){
+                if( (line.indexOf("<GA:") != -1) && (line.indexOf(">") != -1) ) {
                     int chPos = 4;
                     srcDev = line.substring( chPos, chPos += 3 );
                     dstDev = line.substring( chPos, chPos += 3 );
@@ -114,7 +114,7 @@ public class ParserGANET {
                             activeParseID = eParse.eFolder;
                         } else if( parseExCommand == MainGanetPKG.eExCommand.eEjected ){
                             mTrack.clear();
-                            mFolder.clearAll();
+                            mFolder.resetFolders();
                             activeParseID = eParse.eEjectDisk;
                         } else if( parseExCommand == MainGanetPKG.eExCommand.eBeforeTrackPlay) {
                             mActiveTrack.updateActiveTrackInfo( dataDev, parseExCommand );

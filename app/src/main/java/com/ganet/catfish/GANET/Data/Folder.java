@@ -11,19 +11,12 @@ import java.util.Map;
  * folder info
  */
 public class Folder {
-    private int folderId;
-    private int folderLevel;
-    private boolean isSelect;
+    public int folderId;
 
-
-    private Map<Integer, FolderData> mFoldersData;
+    public Map<Integer, FolderData> mFoldersData;
 
     public Folder() {
         mFoldersData = new HashMap<Integer, FolderData>();
-    }
-
-    public void updateFolderInfo( String data ) {
-
     }
 
     /**
@@ -43,6 +36,8 @@ public class Folder {
     public void updateFolderInfo( String exCommand, String data ) {
         int textPos = 2;
         String valueCom;
+        int folderLevel;
+        boolean isSelect;
 
         if( exCommand.equals("0376") ) // get name
         {
@@ -66,7 +61,9 @@ public class Folder {
             String currFolderName = ParserGANET.getString( valueCom, false, true );
 //                    updateNameFolder(valueCom);
 
-            folderDataMarge( currPack, allPack, folderId, currFolderName );
+//            folderDataMarge( currPack, allPack, folderId, currFolderName, isSelect );
+            updateFolderData(folderId, folderLevel, isSelect, currPack, allPack, currFolderName );
+
         } else if ( exCommand.equals("030B") ) { //Folder param
 //183131	684B3102	030B	0F	06	03	0F	05	0F	15	0F	04	00		62		// in sub folder #6 disk #3  (4 trakss)
             valueCom = data.substring( textPos, (textPos +=2) );
@@ -75,10 +72,7 @@ public class Folder {
 
             FolderData currentFolderData;
             if( mFoldersData.containsKey( folderId ) ) currentFolderData = mFoldersData.get(folderId);
-            else {
-                currentFolderData = new FolderData();
-                currentFolderData.folderID = folderId;
-            }
+            else currentFolderData = new FolderData( folderId );
 
             valueCom = data.substring( textPos, (textPos +=2) );
             currentFolderData.folderLevel = Integer.valueOf(valueCom);
@@ -105,10 +99,7 @@ public class Folder {
 
             FolderData currentFolderData;
             if( mFoldersData.containsKey( folderId ) ) currentFolderData = mFoldersData.get(folderId);
-            else{
-                currentFolderData = new FolderData();
-                currentFolderData.folderID = folderId;
-            }
+            else currentFolderData = new FolderData(folderId);
 
             valueCom = data.substring( textPos +=2, textPos +=2 );
             valueCom = valueCom.replace("FF","0");
@@ -125,6 +116,23 @@ public class Folder {
 
             if( !mFoldersData.containsKey( folderId ) ) mFoldersData.put( folderId, currentFolderData );
         }
+    }
+
+    private void updateFolderData(int folderId, int folderLevel, boolean isSelect, int currPack, int allPack, String currFolderName) {
+        if( mFoldersData.containsKey( Integer.valueOf(folderId) ) ) {
+            FolderData tempFolderData = mFoldersData.get( Integer.valueOf(folderId) );
+            tempFolderData.updateData( currPack, currFolderName );
+            tempFolderData.folderLevel = folderLevel;
+            tempFolderData.isSelect = isSelect;
+        } else {
+            FolderData newFolderData = new FolderData(folderId);
+            newFolderData.setFolderAllPkg(allPack);
+            newFolderData.updateData( currPack, currFolderName );
+            newFolderData.folderLevel = folderLevel;
+            newFolderData.isSelect = isSelect;
+            mFoldersData.put( folderId, newFolderData );
+        }
+
     }
 
 //    /**
@@ -146,30 +154,8 @@ public class Folder {
     /**
      * resetFolders
      */
-    private void resetFolders() {
+    public void resetFolders() {
         mFoldersData.clear();
-    }
-
-    /**
-     *
-     * @param CurrPk
-     * @param AllPk
-     * @param folderID
-     */
-
-    public void folderDataMarge( int CurrPk, int AllPk, int folderID, String folderName ) {
-        if( mFoldersData.containsKey( Integer.valueOf(folderID) ) ) {
-            FolderData tempFolderData = mFoldersData.get( Integer.valueOf(folderID) );
-            tempFolderData.updateData( CurrPk, folderName );
-            tempFolderData.isSelect = isSelect;
-        } else {
-            FolderData newFolderData = new FolderData(AllPk);
-            newFolderData.updateData( CurrPk, folderName );
-            newFolderData.folderID = folderID;
-            newFolderData.folderLevel = folderLevel;
-            newFolderData.isSelect = isSelect;
-            mFoldersData.put( folderID, newFolderData );
-        }
     }
 
     /**
@@ -177,7 +163,7 @@ public class Folder {
      * @return
      */
     public String getNameByID( int keyID ) {
-        String returnVal = "<.......>";
+        String returnVal = "< >";
         if( mFoldersData.containsKey( Integer.valueOf( keyID ) ) ){
             FolderData tempFolderData = mFoldersData.get( Integer.valueOf(keyID) );
             if(tempFolderData.isComplete()) returnVal = tempFolderData.getName();
@@ -185,7 +171,4 @@ public class Folder {
         return returnVal;
     }
 
-    public void clearAll() {
-        mFoldersData.clear();
-    }
 }
