@@ -18,31 +18,11 @@ public class Track {
 
     private GeNetPkgText infoPkg;
 
-//    allPack;
-//    public boolean p0, p1, p2, p3;
-//    public String pS0, pS1, pS2, pS3;
 //-----------------------------------------------------
 
     public Track() {
         infoPkg = new GeNetPkgText();
-//        albomPkg = new GeNetPkgText();
     }
-
-//    public boolean isReadyToShow( MainGanetPKG.eExCommand extCommand) {
-//        if( extCommand == MainGanetPKG.eExCommand.eINFO )
-//            return (infoPkg.p0 && infoPkg.p1 && infoPkg.p2 && infoPkg.p3);
-////        if(extCommand == MainGanetPKG.eExCommand.eACTALBOMENAME )
-////            return (albomPkg.p0 && albomPkg.p1 && albomPkg.p2 && albomPkg.p3);
-//        return false;
-//    };
-
-//    public void updateTrackInfo( String data ) {
-//
-//    }
-//
-//    private void getExCommand() {
-//
-//    }
 
     /*
    need to parse active track info.
@@ -97,13 +77,6 @@ public class Track {
         infoPkg.updateInfo( trackTextTmp, currPack );
     }
 
-//    /**
-//     * resetTrackName
-//     */
-//    private void resetTrackName() {
-//        infoPkg.reset();
-//    }
-
     /**
      * getTrackId
      * @return
@@ -146,5 +119,9 @@ public class Track {
         String returnVal = infoPkg.getText();
         Log.d( TAG, "TrackInfoName: " + infoPkg.getText() );
         return returnVal;
+    }
+
+    public int getFolderId() {
+        return folderId;
     }
 }

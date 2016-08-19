@@ -16,12 +16,15 @@ import android.widget.Toast;
 
 import com.ganet.catfish.GANET.Data.Folder;
 import com.ganet.catfish.GANET.Data.FolderData;
+import com.ganet.catfish.GANET.Data.Track;
 import com.ganet.catfish.GANET.GaNetManager;
 import com.ganet.catfish.GANET.ParserGANET;
 import com.ganet.catfish.GANET.ReadFromFile;
 
 import java.lang.ref.WeakReference;
+import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 public class GaNetService extends Service {
 
@@ -42,6 +45,10 @@ public class GaNetService extends Service {
     public static final String RADIOINFO = "com.ganet.catfish.ganet_service.radio";
     public static final String STARTCDINFO_REQ = "com.ganet.catfish.ganet_service.startsdreq";
     public static final String STARTCDINFO_RES = "com.ganet.catfish.ganet_service.startsdres";
+    public static final String FOLDERINFO_REQ = "com.ganet.catfish.ganet_service.folderinforeq";
+    public static final String FOLDERBYREQ = "com.ganet.catfish.ganet_service.folderbyreq";
+    public static final String FILESBYREQ = "com.ganet.catfish.ganet_service.filesbyreq";
+
 
     private MyHandler mHandler;
     private UsbCom usbService;
@@ -132,6 +139,7 @@ public class GaNetService extends Service {
                                 }
                             }
                     sendBroadcast(in);
+                    Log.d(TAG, "Send FolderID" + mFolderData.getFolderID() + "; Name:" + mFolderData.getName() );
                 }
                 break;
             case eTime:
@@ -265,6 +273,7 @@ public class GaNetService extends Service {
         filter.addAction(SERVICESTATUS_REQ);
         filter.addAction(READFILE);
         filter.addAction(STARTCDINFO_REQ);
+        filter.addAction(FOLDERINFO_REQ);
 
         setFilters();  // Start listening notifications from UsbService
 
@@ -301,6 +310,55 @@ public class GaNetService extends Service {
                         in.putExtra("playArtist", "");
                         sendBroadcast(in);
                         break;
+                    case FOLDERINFO_REQ:
+                    {
+                        //Folders info
+                        Log.d( TAG, "Received FOLDERINFO_REQ" );
+                        final Map<Integer, FolderData> foldersData = mGANET.mFolder.mFoldersData;
+
+                        in = new Intent(FOLDERBYREQ);
+                        in.putExtra( "diskID", mGANET.mActiveTrack.diskID );
+                        int folderCount = foldersData.size();
+                        in.putExtra( "folderCount", folderCount );
+                        int a = 0;
+                        for( Map.Entry<Integer, FolderData> el : foldersData.entrySet() ) {
+                            final FolderData fData = el.getValue();
+                            in.putExtra( "keyFolder_" + String.valueOf(a), fData.getFolderID() );
+                            in.putExtra( "parentIDFolder_" + String.valueOf(a), fData.parentID );
+                            in.putExtra( "nameFolder_" + String.valueOf(a), fData.getName() );
+                            in.putExtra( "calcFromFolder_" + String.valueOf(a), fData.trackCalcFrom );
+                            in.putExtra( "trackCountFolder_" + String.valueOf(a), fData.trackCount );
+                            int subFolders = fData.subFoldersId.size();
+                            in.putExtra( "subFolderCountFolder_" + String.valueOf(a), subFolders );
+                            for( int subFoldersId = 0; subFoldersId < fData.subFoldersId.size(); subFoldersId++ ) {
+                                in.putExtra( "subFolderID" + subFoldersId + "CountFolder_" + String.valueOf(a), fData.subFoldersId.get(subFoldersId) );
+                            }
+                            a++;
+                        }
+                        sendBroadcast(in);
+                        Log.d( TAG, "Sent info about (" + folderCount + ") folders" );
+                        //Files info
+                        in = new Intent(FILESBYREQ);
+
+                        final Map<Integer, Track> trackMap = mGANET.mTrack;
+                        int fileCount = trackMap.size();
+                        in.putExtra( "fileCount", fileCount );
+                        a = 0;
+                        for( Map.Entry<Integer, Track> trEl : trackMap.entrySet() ) {
+                            Track currTr = trEl.getValue();
+                            in.putExtra( "trackId_" + String.valueOf(a), currTr.getTrackId() );
+                            in.putExtra( "trackFId_" + String.valueOf(a), currTr.getFolderId() );
+                            in.putExtra( "trackName_"+ String.valueOf(a), currTr.getName() );
+                            in.putExtra( "trackSelect_"+ String.valueOf(a), currTr.selectedTrack );
+
+                            Log.d( TAG, "Sent track(" + currTr.getTrackId() + ") - " + currTr.getName() );
+                            a++;
+                        }
+
+                        sendBroadcast(in);
+                        Log.d( TAG, "Sent info about (" + fileCount + ") tracks" );
+                    }
+                    break;
                 }
             }
         };
