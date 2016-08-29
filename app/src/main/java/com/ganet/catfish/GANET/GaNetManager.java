@@ -58,4 +58,8 @@ public class GaNetManager {
     public void updateReading(long length, long readedSize) {
         gaService.readingFileUpdate( length, readedSize );
     }
+
+    public void updateTrInfo(Track tempParseTrack) {
+        gaService.sendTrInfo(tempParseTrack);
+    }
 }

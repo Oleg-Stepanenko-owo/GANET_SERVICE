@@ -192,6 +192,17 @@ public class GaNetService extends Service {
         sendBroadcast(in);
     }
 
+    public void sendTrInfo(Track tempParseTrack) {
+        Intent in = new Intent(TRACKINFO);
+        in.putExtra("TrackId", tempParseTrack.getTrackId() );
+        in.putExtra("FolderId", tempParseTrack.getFolderId() );
+        in.putExtra("selected", tempParseTrack.selectedTrack );
+        in.putExtra("TrackName", tempParseTrack.getName() );
+
+        Log.d( TAG, "Update trackId=" + tempParseTrack.getTrackId() + " (" + tempParseTrack.getName() + ")" );
+        sendBroadcast(in);
+    }
+
     /*
      * This handler will be passed to UsbService. Data received from serial port is displayed through this handler
      */

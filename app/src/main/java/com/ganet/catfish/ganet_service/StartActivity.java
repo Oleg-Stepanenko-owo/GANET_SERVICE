@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.ganet.catfish.GANET.GaNetManager;
 import com.ganet.catfish.GANET.ReadFromFile;
-
+//TODO: added  psebilyty for logging in file.
 public class StartActivity extends AppCompatActivity {
 
     boolean isServiceStart;

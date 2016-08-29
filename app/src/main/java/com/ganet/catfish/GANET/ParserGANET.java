@@ -104,7 +104,11 @@ public class ParserGANET {
                                 Track margeParseTrack = mTrack.get(tempParseTrack.getTrackId());
                                 margeParseTrack.trackMarge(tempParseTrack);
                                 mTrack.put(tempParseTrack.getTrackId(), margeParseTrack);
-                            } else mTrack.put(tempParseTrack.getTrackId(), tempParseTrack );
+                                mGaNET.updateTrInfo(margeParseTrack);
+                            } else {
+                                mTrack.put(tempParseTrack.getTrackId(), tempParseTrack );
+                                mGaNET.updateTrInfo(tempParseTrack);
+                            }
                             activeParseID = eParse.eTr;
                         } else if( parseExCommand == MainGanetPKG.eExCommand.ePLAY ) {
                             mActiveTrack.updateActiveTrackInfo( dataDev, parseExCommand );
