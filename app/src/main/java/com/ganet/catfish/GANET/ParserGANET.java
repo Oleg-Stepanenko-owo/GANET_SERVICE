@@ -110,6 +110,9 @@ public class ParserGANET {
                                 mGaNET.updateTrInfo(tempParseTrack);
                             }
                             activeParseID = eParse.eTr;
+                        }else if( parseExCommand == MainGanetPKG.eExCommand.eLOAD ) {
+                            mActiveTrack.updateActiveTrackInfo( dataDev, parseExCommand );
+                            activeParseID = eParse.eActiveTr;
                         } else if( parseExCommand == MainGanetPKG.eExCommand.ePLAY ) {
                             mActiveTrack.updateActiveTrackInfo( dataDev, parseExCommand );
                             activeParseID = eParse.eActiveTr;
@@ -289,6 +292,8 @@ public class ParserGANET {
 
     private MainGanetPKG.eExCommand getExCommand(String exCommand) {
         switch( exCommand ) {
+            case "1000":
+                return MainGanetPKG.eExCommand.eLOAD;
             case "0377":
                 return MainGanetPKG.eExCommand.eINFO;
             case "0300":

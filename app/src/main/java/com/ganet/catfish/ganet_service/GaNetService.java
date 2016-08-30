@@ -105,21 +105,30 @@ public class GaNetService extends Service {
             case eActiveTr:
                 currActiveDisk = mGANET.mActiveTrack.diskID;
                 currActiveTrack = mGANET.mActiveTrack.trackId;
+                if( currActiveDisk != -1 )
+                {
+                    if( currActiveTrack != -1 ) {
+                        in = new Intent(ACTIVETR);
+                        in.putExtra("diskID", mGANET.mActiveTrack.diskID);
+                        in.putExtra("playTrackTime", mGANET.mActiveTrack.getPlayTime());
+                        in.putExtra("folderId", mGANET.mActiveTrack.folderId);
+                        in.putExtra("trackId", mGANET.mActiveTrack.trackId);
+                        in.putExtra("playTrackName", !mGANET.mActiveTrack.getTrackName().isEmpty() ?
+                                mGANET.mActiveTrack.getTrackName() : mGANET.getTrackById(mGANET.mActiveTrack.trackId) );
+                        in.putExtra("playAlbome", mGANET.mActiveTrack.getAlbomeName() );
 
-                in = new Intent(ACTIVETR);
-                in.putExtra("diskID", mGANET.mActiveTrack.diskID);
-                in.putExtra("playTrackTime", mGANET.mActiveTrack.getPlayTime());
-                in.putExtra("folderId", mGANET.mActiveTrack.folderId);
-                in.putExtra("trackId", mGANET.mActiveTrack.trackId);
-                in.putExtra("playTrackName", !mGANET.mActiveTrack.getTrackName().isEmpty() ?
-                        mGANET.mActiveTrack.getTrackName() : mGANET.getTrackById(mGANET.mActiveTrack.trackId) );
-                in.putExtra("playAlbome", mGANET.mActiveTrack.getAlbomeName() );
-
-                Log.d(TAG, "Disk#" + String.valueOf(mGANET.mActiveTrack.diskID)
-                        + "; Track#" + String.valueOf(mGANET.mActiveTrack.trackId )
-                        + " " + mGANET.mActiveTrack.getTrackName()
-                        + "; Time: " + mGANET.mActiveTrack.getPlayTime() );
-                sendBroadcast(in);
+                        Log.d(TAG, "Disk#" + String.valueOf(mGANET.mActiveTrack.diskID)
+                                + "; Track#" + String.valueOf(mGANET.mActiveTrack.trackId )
+                                + " " + mGANET.mActiveTrack.getTrackName()
+                                + "; Time: " + mGANET.mActiveTrack.getPlayTime() );
+                        sendBroadcast(in);
+                    } else { // insert new DISK
+                        in = new Intent(DISKID);
+                        in.putExtra("diskID", mGANET.mActiveTrack.diskID);
+                        Log.d( TAG, "INSERT Disk#" + String.valueOf(mGANET.mActiveTrack.diskID) );
+                        sendBroadcast(in);
+                    }
+                }
                 break;
             case eTr:
                 break;

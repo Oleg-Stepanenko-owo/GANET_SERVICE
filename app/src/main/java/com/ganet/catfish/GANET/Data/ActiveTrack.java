@@ -152,6 +152,10 @@ public class ActiveTrack {
 
             valueCom = data.substring( textPos, data.length() );
             updateActArtistName(valueCom, currPack, isAscii);
+        } else if ( extCommand == MainGanetPKG.eExCommand.eLOAD ) {
+            clear();
+            valueCom = data.substring(textPos, (textPos += 1));
+            diskID = Integer.valueOf(valueCom);
         }
     }
 
@@ -229,5 +233,9 @@ public class ActiveTrack {
         folderId = -1;
         playMin = 0;
         playSec = 0;
+        diskID = -1;
+        trackId = -1;
+        actFileName = "";
+        actArtistName = "";
     }
 }
