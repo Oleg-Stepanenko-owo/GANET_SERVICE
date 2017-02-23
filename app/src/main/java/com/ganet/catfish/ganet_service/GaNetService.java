@@ -18,6 +18,7 @@ import com.ganet.catfish.GANET.Data.Folder;
 import com.ganet.catfish.GANET.Data.FolderData;
 import com.ganet.catfish.GANET.Data.Track;
 import com.ganet.catfish.GANET.GaNetManager;
+import com.ganet.catfish.GANET.LogToFile;
 import com.ganet.catfish.GANET.ParserGANET;
 import com.ganet.catfish.GANET.ReadFromFile;
 
@@ -48,18 +49,21 @@ public class GaNetService extends Service {
     public static final String FOLDERINFO_REQ = "com.ganet.catfish.ganet_service.folderinforeq";
     public static final String FOLDERBYREQ = "com.ganet.catfish.ganet_service.folderbyreq";
     public static final String FILESBYREQ = "com.ganet.catfish.ganet_service.filesbyreq";
-
+    public static final String WRITELOG = "com.ganet.catfish.ganet_service.writelog";
 
     private MyHandler mHandler;
     private UsbCom usbService;
     private GaNetManager mGANET;
     private ReadFromFile readFileObj;
+    private LogToFile mFilelog;
     private int currActiveTrack;
     private int currActiveDisk;
 
     boolean isStart = false;
-    BroadcastReceiver br;
 
+    private boolean mLogWrite = false;
+
+    BroadcastReceiver br;
 
     //--------------------- USB SERIAL ------------------------------------------------------
     /*
@@ -164,6 +168,10 @@ public class GaNetService extends Service {
                 updateDiskInfo();
                 break;
             case eVolume:
+                Log.d( TAG, "Volume:" + mGANET.mVol.getVol() );
+                in = new Intent(VOLUMEINFO);
+                in.putExtra( "VOL", mGANET.mVol.getVol() );
+                sendBroadcast(in);
                 break;
             case eRadio:
                 in = new Intent(RADIOINFO);
@@ -213,7 +221,8 @@ public class GaNetService extends Service {
     }
 
     /*
-     * This handler will be passed to UsbService. Data received from serial port is displayed through this handler
+     * This handler will be passed to UsbService.
+     * Data received from serial port is displayed through this handler
      */
     private static class MyHandler extends Handler {
         static int iPK = 0;
@@ -232,8 +241,8 @@ public class GaNetService extends Service {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-//                            mGaNetService.get().mFileLog.writeFile( data );
-//                            mGaNetService.get().mGANET.mParser.parseLine(data);
+                            mGaNetService.get().mFilelog.writeFile( data );
+                            mGaNetService.get().mGANET.mParser.parseLine(data);
                         }
                     }).start();
 
@@ -281,7 +290,8 @@ public class GaNetService extends Service {
     public GaNetService() {
         currActiveTrack = 0;
         currActiveDisk = 0;
-        mHandler = new MyHandler(this);
+        mHandler = new MyHandler( this );
+        mFilelog = new LogToFile( this );
     }
 
     public void onCreate() {
@@ -292,6 +302,7 @@ public class GaNetService extends Service {
         filter.addAction(SERVICESTART);
         filter.addAction(SERVICESTATUS_REQ);
         filter.addAction(READFILE);
+        filter.addAction(WRITELOG);
         filter.addAction(STARTCDINFO_REQ);
         filter.addAction(FOLDERINFO_REQ);
 
@@ -303,6 +314,9 @@ public class GaNetService extends Service {
             public void onReceive(Context context, Intent intent) {
                 Intent in;
                 switch (intent.getAction()) {
+                    case WRITELOG:
+                        if(intent.hasExtra("LOG")) mLogWrite = intent.getBooleanExtra("LOG", false);
+                        break;
 //                    case SERVICESTART:
 //                        if(!isStart) {
 //                            startUSBList();
@@ -409,4 +423,9 @@ public class GaNetService extends Service {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
+    public boolean ismLogWrite() {
+        return mLogWrite;
+    }
+
 }

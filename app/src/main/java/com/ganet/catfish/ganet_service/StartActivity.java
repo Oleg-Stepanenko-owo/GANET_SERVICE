@@ -9,17 +9,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ganet.catfish.GANET.GaNetManager;
 import com.ganet.catfish.GANET.ReadFromFile;
 //TODO: added  psebilyty for logging in file.
-public class StartActivity extends AppCompatActivity {
+public class StartActivity extends AppCompatActivity implements View.OnClickListener {
 
     boolean isServiceStart;
     RadioButton rb1, rb2, rb3;
+    CheckBox cbLog;
     BroadcastReceiver service;
     TextView tvServInfo, timeTextView;
     Button btStart, btStartReadFile;
@@ -35,6 +38,7 @@ public class StartActivity extends AppCompatActivity {
         filter.addAction(GaNetService.SERVICESTATUS_RES);
         filter.addAction(GaNetService.TIMEINFO);
         filter.addAction(GaNetService.READFILE);
+        filter.addAction(GaNetService.VOLUMEINFO);
 
         service = new BroadcastReceiver()
         {
@@ -57,6 +61,13 @@ public class StartActivity extends AppCompatActivity {
                             updateFileReadUi( allSize, readedSize );
                         }
                         break;
+//                    case GaNetService.VOLUMEINFO:
+//                        if( intent.hasExtra("VOL") )
+//                        {
+//                            CharSequence text = String.valueOf(intent.getIntExtra("VOL", 0));
+//                            Toast.makeText( context, text, Toast.LENGTH_SHORT ).show();
+//                        }
+//                        break;
                     default:
                         break;
                 }
@@ -67,6 +78,12 @@ public class StartActivity extends AppCompatActivity {
         ((RadioButton) findViewById(R.id.rb1)).setText("yam_fm1.txt");
         ((RadioButton) findViewById(R.id.rb2)).setText("yamGANET1.log");
         ((RadioButton) findViewById(R.id.rb3)).setText("yam_fm2.txt");
+
+        cbLog = (CheckBox) findViewById(R.id.cbLogWrite);
+        cbLog.setOnClickListener(this);
+
+        if(!isServiceStart)
+            startService(new Intent( this, GaNetService.class));
     }
 
     private void updateFileReadUi(long allSize, long readedSize) {
@@ -130,5 +147,16 @@ public class StartActivity extends AppCompatActivity {
                           }
                       }
         );
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch( view.getId()){
+            case R.id.cbLogWrite:
+                Intent in = new Intent(GaNetService.WRITELOG);
+                in.putExtra( "LOG", cbLog.isChecked() );
+                sendBroadcast(in);
+                break;
+        }
     }
 }
