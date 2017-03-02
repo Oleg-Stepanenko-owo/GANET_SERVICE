@@ -227,6 +227,7 @@ public class GaNetService extends Service {
     private static class MyHandler extends Handler {
         static int iPK = 0;
         private final WeakReference<GaNetService> mGaNetService;
+        String parseLine = "";
 
         public MyHandler(GaNetService activity) {
             mGaNetService = new WeakReference<>(activity);
@@ -236,22 +237,27 @@ public class GaNetService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case UsbCom.MESSAGE_FROM_SERIAL_PORT:
-                    final String data = (String) msg.obj;
-                    // mActivity.get().vtComLog.append(String.valueOf(iPK++) + ":" + data);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mGaNetService.get().mFilelog.writeFile( data );
-                            mGaNetService.get().mGANET.mParser.parseLine(data);
-                        }
-                    }).start();
 
+                    parseLine += (String) msg.obj;
+                    if( parseLine.indexOf('>') != -1 ) {
+                        final String data = parseLine;
+                        parseLine = "";
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mGaNetService.get().mFilelog.writeFile(data);
+                                mGaNetService.get().mGANET.mParser.parseLine(data);
+                            }
+                        }).start();
+                    }
                     break;
                 case UsbCom.CTS_CHANGE:
                     Toast.makeText(mGaNetService.get(), "CTS_CHANGE",Toast.LENGTH_LONG).show();
+                    Log.e( TAG, "UsbCom.CTS_CHANGE" );
                     break;
                 case UsbCom.DSR_CHANGE:
                     Toast.makeText(mGaNetService.get(), "DSR_CHANGE",Toast.LENGTH_LONG).show();
+                    Log.e( TAG, "UsbCom.DSR_CHANGE" );
                     break;
             }
         }
@@ -296,6 +302,8 @@ public class GaNetService extends Service {
 
     public void onCreate() {
         super.onCreate();
+
+        Log.d( TAG, "GaNetService onCreate" );
 
         IntentFilter filter = new IntentFilter();
 
@@ -420,8 +428,9 @@ public class GaNetService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        return null;
         // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+//        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public boolean ismLogWrite() {

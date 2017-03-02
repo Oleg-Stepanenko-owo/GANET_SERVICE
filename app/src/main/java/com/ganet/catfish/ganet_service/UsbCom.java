@@ -192,7 +192,7 @@ public class UsbCom extends Service {
         // This snippet will try to open the first encountered usb device connected, excluding usb root hubs
         HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
-//            boolean keep = true;
+            boolean keep = true;
             for (Map.Entry<String, UsbDevice> entry : usbDevices.entrySet()) {
                 device = entry.getValue();
                 int deviceVID = device.getVendorId();
@@ -207,28 +207,30 @@ public class UsbCom extends Service {
 
                     Log.d(TAG, "USB VDI:" + deviceVID + "; hasPermitionDev - " + hasPermitionDev);
 
-                    if( hasPermitionDev && deviceVID == 1155 ) {
-                        connection = usbManager.openDevice(device);
-                        new ConnectionThread(device).start();
-                        Log.d(TAG, "USB Started ");
+                    if( deviceVID == 1155)
+                    {
+                        if( hasPermitionDev ) {
+                            connection = usbManager.openDevice(device);
+                            new ConnectionThread(device).start();
+                            Log.d(TAG, "USB Started ");
+                        }
+                        else requestUserPermission();
+                        keep = false;
                     }
-
-//                    requestUserPermission();
-//                    keep = false;
                 }
-//                else {
-//                    connection = null;
-//                    device = null;
-//                }
+                else {
+                    connection = null;
+                    device = null;
+                }
 
-//                if (!keep)
-//                    break;
+                if (!keep)
+                    break;
             }
-//            if (!keep) {
-//                // There is no USB devices connected (but usb host were listed). Send an intent to MainActivity.
-//                Intent intent = new Intent(ACTION_NO_USB);
-//                sendBroadcast(intent);
-//            }
+            if (!keep) {
+                // There is no USB devices connected (but usb host were listed). Send an intent to MainActivity.
+                Intent intent = new Intent(ACTION_NO_USB);
+                sendBroadcast(intent);
+            }
         } else {
             // There is no USB devices connected. Send an intent to MainActivity
             Intent intent = new Intent(ACTION_NO_USB);

@@ -44,7 +44,7 @@ public class ParserGANET {
     private String srcDev, dstDev;
     private String commandDev;
     private String exCommand;
-    private String dataDev;
+//    private String dataDev;
     private int activeDiskID;
 
     private String buffer;
@@ -70,10 +70,14 @@ public class ParserGANET {
 
     public void parseLine( String lineTmp ) {
         try {
+//            Log.d( TAG, "Origin line:" + lineTmp );
             extractGaNetLine( lineTmp );
             for( int a = 0; a < vGANETCommand.size(); a++ ) {
                 String line = vGANETCommand.get(a);
                 activeParseID = eParse.eNone;
+
+//                Log.d( TAG, "parseLine:" + line );
+
                 // <GA:183 100 600D01000140 1517 0000CD> - TIME
                 if( (line.indexOf("<GA:") != -1) && (line.indexOf(">") != -1) ) {
                     int chPos = 4;
@@ -83,7 +87,7 @@ public class ParserGANET {
                     // TIME
                     if( line.indexOf("600D01000140", chPos) != -1 ) {
                         commandDev = line.substring( chPos, chPos += 12 );
-                        dataDev = line.substring( chPos, chPos += 4 );
+                        final String dataDev = line.substring( chPos, chPos += 4 );
                         mDevTime.setDevTime( dataDev );
                         activeParseID = eParse.eTime;
                     }
@@ -93,7 +97,7 @@ public class ParserGANET {
                         commandDev = line.substring( chPos, chPos += 8 );
                         exCommand = line.substring( chPos, chPos += 4 );
                         int endPos = (line.length() - 3); //without 2last symbols (CRS)
-                        dataDev = line.substring( chPos, endPos );
+                        final String dataDev = line.substring( chPos, endPos );
 
                         MainGanetPKG.eExCommand parseExCommand = getExCommand(exCommand);
                         if( parseExCommand == MainGanetPKG.eExCommand.eINFO ) {
@@ -144,7 +148,7 @@ public class ParserGANET {
                     else if ( (line.indexOf("680231020200") != -1) && dstDev.equals("131") )
                     {
                         commandDev = line.substring( chPos, chPos += 12 );
-                        dataDev = line.substring( chPos, chPos += 2 );
+                        String dataDev = line.substring( chPos, chPos += 2 );
                         dataDev = dataDev.replace( "FF", "00" );
 
                         mVol.setVol( Integer.valueOf(dataDev, 16).intValue() );
@@ -156,7 +160,7 @@ public class ParserGANET {
                         commandDev = line.substring( chPos, chPos += 8 );
                         exCommand = line.substring( chPos, chPos += 4 );
                         int endPos = (line.length() - 3); //without 2last symbols (CRS)
-                        dataDev = line.substring( chPos, endPos );
+                        final String dataDev = line.substring( chPos, endPos );
 
                         mRadio.mCurrRAction = mRadio.getCommand(exCommand);
                         if ( RadioAction.eRadioCommand.eChange != mRadio.mCurrRAction &&

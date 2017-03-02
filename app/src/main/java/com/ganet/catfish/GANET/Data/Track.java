@@ -43,6 +43,8 @@ public class Track {
         int textPos = 2;
         String valueCom;
 
+//        Log.d( TAG, "updateTrackInfo. data[" + data + "]; extCommand: " + extCommand );
+
         if( extCommand == MainGanetPKG.eExCommand.eINFO ) {
             valueCom = data.substring( textPos, (textPos +=2) );
             folderId = Integer.valueOf(valueCom);
@@ -64,6 +66,7 @@ public class Track {
             infoPkg.setAllPack( Integer.valueOf(valueCom) );
 
             valueCom = data.substring( textPos, data.length() );
+//            Log.d( TAG, "updateTrackInfo(updateNameTrack). valueCom[" + valueCom + "]; currPack: " + currPack );
             updateNameTrack(valueCom, currPack, false);
         }
     }
