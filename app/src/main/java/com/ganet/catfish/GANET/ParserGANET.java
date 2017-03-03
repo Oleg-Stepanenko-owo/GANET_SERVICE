@@ -5,6 +5,7 @@ import android.util.Log;
 import com.ganet.catfish.GANET.Data.ActiveTrack;
 import com.ganet.catfish.GANET.Data.DevTime;
 import com.ganet.catfish.GANET.Data.Folder;
+import com.ganet.catfish.GANET.Data.PingDev;
 import com.ganet.catfish.GANET.Data.RadioAction;
 import com.ganet.catfish.GANET.Data.Track;
 import com.ganet.catfish.GANET.Data.Volume;
@@ -27,6 +28,7 @@ public class ParserGANET {
         eInsertTrack,
         eVolume,
         eRadio,
+        ePing,
         eNone
     }
     private GaNetManager mGaNET;
@@ -38,7 +40,6 @@ public class ParserGANET {
     private DevTime mDevTime;
     private Volume mVol;
     private RadioAction mRadio;
-
     private eParse activeParseID;
 
     private String srcDev, dstDev;
@@ -90,6 +91,20 @@ public class ParserGANET {
                         final String dataDev = line.substring( chPos, chPos += 4 );
                         mDevTime.setDevTime( dataDev );
                         activeParseID = eParse.eTime;
+                    }
+                    //PING
+                    else if( (line.indexOf("780D3103") != -1) && dstDev.equals("131") ) {
+                        commandDev = line.substring( chPos, chPos += 8 );
+                        exCommand = line.substring( chPos, chPos += 4 );
+                        final String dataDev = line.substring( chPos, chPos += 4 );
+
+                        MainGanetPKG.eExCommand parseExCommand = getExCommand(exCommand);
+                        if( parseExCommand == MainGanetPKG.eExCommand.ePingCD  ||
+                                parseExCommand == MainGanetPKG.eExCommand.ePingFM ) {
+                            final PingDev mPingDev = getPingDevice( parseExCommand, dataDev );
+                            mGaNET.updatePing( mPingDev );
+                            activeParseID = eParse.ePing;
+                        }
                     }
                     // CD\DVD DISK
                     else if( (line.indexOf("684B3102") != -1) && dstDev.equals("131") )
@@ -193,6 +208,31 @@ public class ParserGANET {
         catch (ArrayIndexOutOfBoundsException e){
             vGANETCommand.clear();
         }
+    }
+
+    private PingDev getPingDevice(MainGanetPKG.eExCommand parseExCommand, String dataDev) {
+        PingDev pingDev = new PingDev();
+        if( parseExCommand == MainGanetPKG.eExCommand.ePingCD ||
+                parseExCommand == MainGanetPKG.eExCommand.ePingFM )
+        {
+            switch( dataDev ){
+                case "0000":
+                    pingDev.setActiveDevPing( PingDev.eActiveDevPing.eCD );
+                    break;
+                case "0001":
+                    pingDev.setActiveDevPing( PingDev.eActiveDevPing.eFM1 );
+                    break;
+                case "0002":
+                    pingDev.setActiveDevPing( PingDev.eActiveDevPing.eFM2 );
+                    break;
+                case "0011":
+                    pingDev.setActiveDevPing( PingDev.eActiveDevPing.eAM );
+                    break;
+                default:
+                    pingDev.setActiveDevPing( PingDev.eActiveDevPing.eNone );
+            }
+        }
+        return pingDev;
     }
 
     private void extractGaNetLine( String lineTmp ) {
@@ -322,6 +362,10 @@ public class ParserGANET {
                 return MainGanetPKG.eExCommand.eACTFOLDERNAMSE;
             case "0374":
                 return MainGanetPKG.eExCommand.eACTARTISTNAME;
+            case "024B":
+                return MainGanetPKG.eExCommand.ePingCD;
+            case "0207":
+                return MainGanetPKG.eExCommand.ePingFM;
         }
         return MainGanetPKG.eExCommand.eNONE;
     }

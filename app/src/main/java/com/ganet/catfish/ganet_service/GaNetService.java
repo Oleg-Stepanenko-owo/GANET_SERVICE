@@ -50,6 +50,7 @@ public class GaNetService extends Service {
     public static final String FOLDERBYREQ = "com.ganet.catfish.ganet_service.folderbyreq";
     public static final String FILESBYREQ = "com.ganet.catfish.ganet_service.filesbyreq";
     public static final String WRITELOG = "com.ganet.catfish.ganet_service.writelog";
+    public static final String PINGINFO = "com.ganet.catfish.ganet_service.pinginfo";
 
     private MyHandler mHandler;
     private UsbCom usbService;
@@ -105,7 +106,7 @@ public class GaNetService extends Service {
     public void invalidate(ParserGANET.eParse activeParseID) {
         Intent in;
 
-        switch ( activeParseID ){
+        switch ( activeParseID ) {
             case eActiveTr:
                 currActiveDisk = mGANET.mActiveTrack.diskID;
                 currActiveTrack = mGANET.mActiveTrack.trackId;
@@ -183,6 +184,11 @@ public class GaNetService extends Service {
                 Log.d( TAG, "(" + mGANET.mRadio.mCurrRAction.ordinal() + ") Radio: " +
                         mGANET.mRadio.mFrequency + "; Type:" + mGANET.mRadio.mRadioType.ordinal() +
                         "; Store#" + mGANET.mRadio.mStoreID );
+                sendBroadcast(in);
+                break;
+            case ePing:
+                in = new Intent(PINGINFO);
+                in.putExtra( "Ping", mGANET.mPingDev.getActiveDevPing().ordinal() );
                 sendBroadcast(in);
                 break;
             case eNone:

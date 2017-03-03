@@ -28,6 +28,8 @@ public class MainGanetPKG {
         eACTARTISTNAME, //0374
         eFOLDERNAME,    //0376
         eACTTRACKNAME2, //0378
+        ePingCD,        //024B
+        ePingFM,        //0207
         eNONE
     };
 

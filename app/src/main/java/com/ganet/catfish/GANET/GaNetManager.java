@@ -3,6 +3,7 @@ package com.ganet.catfish.GANET;
 import com.ganet.catfish.GANET.Data.ActiveTrack;
 import com.ganet.catfish.GANET.Data.DevTime;
 import com.ganet.catfish.GANET.Data.Folder;
+import com.ganet.catfish.GANET.Data.PingDev;
 import com.ganet.catfish.GANET.Data.RadioAction;
 import com.ganet.catfish.GANET.Data.Track;
 import com.ganet.catfish.GANET.Data.Volume;
@@ -25,6 +26,7 @@ public class GaNetManager {
     public ActiveTrack mActiveTrack;
     public Volume mVol;
     public RadioAction mRadio;
+    public PingDev mPingDev;
 
     public ParserGANET mParser;
 
@@ -37,6 +39,7 @@ public class GaNetManager {
         mVol = new Volume();
         mRadio = new RadioAction();
         mParser = new ParserGANET( this );
+        mPingDev = new PingDev();
     }
 
     public ParserGANET getParser() {
@@ -62,4 +65,6 @@ public class GaNetManager {
     public void updateTrInfo(Track tempParseTrack) {
         gaService.sendTrInfo(tempParseTrack);
     }
+
+    public void updatePing(PingDev mPingDev) { this.mPingDev = mPingDev; }
 }
